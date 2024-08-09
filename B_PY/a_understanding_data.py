@@ -3,13 +3,15 @@
     """
 
 import pandas as pd
+import numpy as np
+
 from A_PROJ.proj import FILE_PATH
 
 ##
 
-fp = FILE_PATH.lift_snps
+fp1 = FILE_PATH.lift_snps
 
-df = pd.read_csv(fp ,
+df = pd.read_csv(fp1 ,
                  sep = '\t' ,
                  header = None ,
                  names = ['chr' , 'start' , 'end' , 'rsid'])
@@ -67,8 +69,8 @@ df.shape[0] == df.drop_duplicates(subset = ['chr' , 'start']).shape[0]
 
 # are lifted and original snps the same?
 
-f2 = '/var/genetics/ws/mahdimir/local/prj_data/24Q2/6A240625_liftover_GRCH37_2_GRCH38/out/snps.lifted'
-dfb = pd.read_csv(f2 ,
+fp2 = FILE_PATH.lifted_snps
+dfb = pd.read_csv(fp2 ,
                   sep = '\t' ,
                   header = None ,
                   names = ['chr' , 'start' , 'end' , 'rsid'])
@@ -123,68 +125,33 @@ dfb['rsid'].isin(df['rsid']).all()
 
 ##
 
+# make sure index is unique (should be unique already)
+# I need it to be unique to use it as a map for file names
 
+dfb.index.is_unique
 
-
-##
-
-
-
-
-
-
+# yes it is
 
 ##
 
+dfb.to_parquet(FILE_PATH.rsids)
 
 ##
 
+# reading the parquet file to make sure it is saved correctly
 
-##
-
-##
-df['rsid'].nunique()
-
-##
-df.drop_duplicates(subset = ['chr' , 'start' , 'end']).shape
-
-##
-df.drop_duplicates().shape
-
-##
-import subprocess
-import os
-
-def get_git_repo_name() :
-    try :
-        # Run the git rev-parse command to get the top-level directory of the repo
-        result = subprocess.run(['git' , 'rev-parse' , '--show-toplevel'] ,
-                capture_output = True ,
-                text = True ,
-                check = True)
-        # Get the top-level directory path and extract the repo name
-        repo_path = result.stdout.strip()
-        repo_name = os.path.basename(repo_path)
-        return repo_name
-    except subprocess.CalledProcessError as e :
-        print(f"An error occurred: {e}")
-        return None
-
-repo_name = get_git_repo_name()
-if repo_name :
-    print(f"Current Git repository name: {repo_name}")
-else :
-    print("Failed to get Git repository name.")
-
-##
-from pathlib import Path
-
-Path.cwd()
-
-##
+dfc = pd.read_parquet(FILE_PATH.rsids)
 
 
 ##
-all_snps = set(df.columns)
+dfb.eq(dfc).all().all()
+
+# yes, they are the same
+
+##
+np.all(dfb.index == dfc.index)
+
+# yes, the index is the same
+# thanks god!
 
 ##
