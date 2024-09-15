@@ -18,7 +18,10 @@ class Directory :
     # snps_by_chr = inp / 'snps_by_chr'
     gt_by_individual = inp / 'gt_by_individual'
 
+    wgs_gt_by_snp = med / 'wgs_gt_by_snp'
+
 DIR = Directory()
+D = DIR
 
 class FilePath :
     d = DIR
@@ -32,14 +35,26 @@ class FilePath :
     # rsids to be used in the analysis, with index (to use as a map for file names)
     rsids = d.med / 'rsids.parquet'
 
+    # sibs ids map in UKB data
+    sibs_map = '/var/genetics/ws/mahdimir/local/prj_data/24Q3/09A240711_verify_all_individual_IDs_are_available/out/hap_kin0_full_sibs_only.parquet'
+
+    sibs_rs11586607 = d.med / 'rs11586607.parquet'
+    imputed_rs11586607 = d.med / 'imputed_rs11586607.parquet'
+
+
 
 FILE_PATH = FilePath()
+FP = FILE_PATH
 
 class FilePathPattern :
-    pass
+    d = DIR
+    fp = FILE_PATH
 
-FILE_PATH_PAT = FilePathPattern()
+    wgs_gt_by_snp = str(d.wgs_gt_by_snp / '{rsid_idx}.parquet')
 
+
+FILE_PATH_PATRN = FilePathPattern()
+FPP = FILE_PATH_PATRN
 
 class Var :
     rsid = 'rsid'
@@ -50,7 +65,6 @@ class Var :
     inf_type = 'InfType'
     fs = 'FS'
     po = 'PO'
-    iid = 'IID'
     check = 'Check'
     suf = 'suffix'
     fol = 'folder'
@@ -69,3 +83,6 @@ class Var :
 
 
 VAR = Var()
+V = VAR
+
+##
